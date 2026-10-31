@@ -79,7 +79,7 @@ window.deleteTransaction=async function(btn){
    const target=list[targetIndex];
    if(!target.balanceChanges)throw new Error("Transaksi lama ini belum memiliki catatan perubahan saldo otomatis. Demi keamanan, transaksi tidak dihapus otomatis.");
    Object.entries(target.balanceChanges).forEach(([service,delta])=>{balances[service]=Number(balances[service]||0)-Number(delta||0)});
-   const paid=Number(target.paid||0);if(paid)balances["Cash / Tunai"]=Number(balances["Cash / Tunai"]||0)-paid;
+   const paid=Number(target.paid||0);if(paid){if(target.type==="Tarik Tunai Utang"){(target.payments||[]).forEach(p=>{const dest=p.receiveService||"Cash / Tunai";balances[dest]=Number(balances[dest]||0)-Number(p.amount||0);balances["Fee Tarik/Trf"]=Number(balances["Fee Tarik/Trf"]||0)-Number(p.fee||0)})}else{balances["Cash / Tunai"]=Number(balances["Cash / Tunai"]||0)-paid}}
    const filtered=list.slice();filtered.splice(targetIndex,1);
    transaction.update(ref,{balances,tx:filtered,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
   });
