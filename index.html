@@ -52,15 +52,27 @@ window.deleteTransaction=async function(btn){
  if(!window.confirm("Yakin ingin menghapus transaksi ini?"))return;
  btn.disabled=true;btn.textContent="Menghapus...";
  try{
-  const n=fresh();
-  const before=n.tx.length;
-  n.tx=n.tx.filter(t=>String(t.id)!==String(id));
-  if(n.tx.length===before)throw new Error("Transaksi tidak ditemukan. Muat ulang halaman lalu coba lagi.");
-  await persist(n);
-  el("sync").textContent="Transaksi berhasil dihapus dan tersinkron.";
+  await db.runTransaction(async transaction=>{
+   const snap=await transaction.get(ref);
+   if(!snap.exists)throw new Error("Data transaksi tidak ditemukan di server.");
+   const latest=snap.data();
+   const list=Array.isArray(latest.tx)?latest.tx:[];
+   const filtered=list.filter(t=>String(t.id)!==String(id));
+   if(filtered.length===list.length)throw new Error("Transaksi tidak ditemukan di data server. Muat ulang halaman.");
+   transaction.update(ref,{tx:filtered,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  });
+  const snap=await ref.get();
+  if(!snap.exists)throw new Error("Data tidak ditemukan setelah penghapusan.");
+  const latest=snap.data();
+  services=Array.isArray(latest.services)&&latest.services.length?[...latest.services]:[...defaultServices];
+  if(!services.includes("Cash / Tunai"))services.push("Cash / Tunai");
+  data={balances:latest.balances||{},tx:latest.tx||[],expenses:latest.expenses||[],services:[...services]};
+  render();initSelect();
+  if((data.tx||[]).some(t=>String(t.id)===String(id)))throw new Error("Server masih menyimpan transaksi tersebut. Coba muat ulang halaman.");
+  el("sync").textContent="Transaksi berhasil dihapus dari Firebase.";
  }catch(x){
   btn.disabled=false;btn.textContent="Hapus";
-  alert("Gagal menghapus transaksi: "+(x.message||x));
+  alert("Transaksi belum terhapus: "+(x.message||x));
  }
 };
 el("expenses").onclick=async e=>{const id=e.target.dataset.delexp;if(!id||!confirm("Hapus catatan pengeluaran ini?"))return;const n=fresh();n.expenses=n.expenses.filter(t=>t.id!==id);try{await persist(n)}catch(x){alert(x.message)}};
