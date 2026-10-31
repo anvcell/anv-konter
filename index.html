@@ -91,6 +91,24 @@ window.deleteTransaction=async function(btn){
  }catch(x){btn.disabled=false;btn.textContent="Hapus";alert("Transaksi belum terhapus: "+(x.message||x));}
 };
 el("expenses").onclick=async e=>{const id=e.target.dataset.delexp;if(!id||!confirm("Hapus catatan pengeluaran ini?"))return;const n=fresh();n.expenses=n.expenses.filter(t=>t.id!==id);try{await persist(n)}catch(x){alert(x.message)}};
-el("export").onclick=()=>{const rows=[["Tanggal","Jenis","Keterangan","Layanan","Nominal","Modal","Admin/Untung","Laba","Pembayaran","Pelanggan","Terbayar","Sisa"],...(data.tx||[]).map(t=>[t.date,t.type,t.desc,t.service,t.amount,t.cost,t.fee,t.profit,t.payment,t.customer,t.paid,Math.max(0,Number(t.amount)-Number(t.paid||0))])];const csv=rows.map(r=>r.map(v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"').join(",")).join("\n");const a=document.createElement("a");const u=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.href=u;a.download="laporan-anv.csv";a.click();URL.revokeObjectURL(u)};
+el("export").onclick=()=>{
+ const tx=data.tx||[],expenses=data.expenses||[],rows=[];
+ const totalOmzet=tx.filter(t=>!["Saldo masuk","Saldo keluar"].includes(t.type)).reduce((s,t)=>s+Number(t.amount||0),0);
+ const totalProfit=tx.reduce((s,t)=>s+Number(t.profit||0),0);
+ const totalExpense=expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+ const totalDebt=tx.filter(t=>t.payment==="Hutang").reduce((s,t)=>s+Math.max(0,Number(t.amount||0)-Number(t.paid||0)),0);
+ const totalPaid=tx.reduce((s,t)=>s+Number(t.paid||0),0);
+ rows.push(["LAPORAN ANV KONTER & BRILINK"],["Tanggal ekspor",today()],[],["RINGKASAN"],["Keterangan","Jumlah (Rp)"],["Total omzet",totalOmzet],["Total laba transaksi",totalProfit],["Total pengeluaran",totalExpense],["Laba bersih sederhana",totalProfit-totalExpense],["Total pembayaran hutang diterima",totalPaid],["Sisa piutang pelanggan",totalDebt],[],["A. RINCIAN TRANSAKSI"],["No","Tanggal","Jenis Transaksi","Keterangan","Sumber / Layanan","Metode Pembayaran","Nama Pelanggan","Nominal (Rp)","Modal (Rp)","Admin / Untung (Rp)","Laba (Rp)","Sudah Dibayar (Rp)","Sisa Hutang (Rp)"]);
+ tx.forEach((t,i)=>rows.push([i+1,t.date||"",t.type||"",t.desc||"",t.service||t.brilinkService||t.sourceService||"",t.payment||"Tunai",t.customer||"",Number(t.amount||0),Number(t.cost||0),Number(t.fee||0),Number(t.profit||0),Number(t.paid||0),Math.max(0,Number(t.amount||0)-Number(t.paid||0))]));
+ rows.push([],["B. RIWAYAT PEMBAYARAN HUTANG"],["No","Tanggal Transaksi","Pelanggan","Keterangan","Tanggal Pembayaran","Nominal Cicilan (Rp)","Admin (Rp)","Saldo Tujuan"]);
+ let payNo=0;tx.forEach(t=>(t.payments||[]).forEach(p=>{payNo++;rows.push([payNo,t.date||"",t.customer||"",t.desc||"",p.date||"",Number(p.amount||0),Number(p.fee||0),p.receiveService||"Cash / Tunai"])}));
+ rows.push([],["C. RINCIAN PENGELUARAN"],["No","Tanggal","Keterangan","Nominal (Rp)"]);
+ expenses.forEach((e,i)=>rows.push([i+1,e.date||"",e.desc||"",Number(e.amount||0)]));
+ rows.push([],["D. SALDO LAYANAN SAAT EKSPOR"],["Nama Layanan","Saldo (Rp)"]);
+ services.forEach(s=>rows.push([s,Number(data.balances[s]||0)]));
+ const csv=rows.map(r=>r.map(v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const a=document.createElement("a"),u=URL.createObjectURL(new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
+ a.href=u;a.download="Laporan-AnV-Konter-BRILink-"+today().replace(/[^0-9]/g,"-")+".csv";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
+};
 initSelect();
 </script></body></html>
