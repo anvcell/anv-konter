@@ -20,13 +20,13 @@ class MainActivity : Activity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.databaseEnabled = true
-        webView.settings.cacheMode = WebSettings.LOAD_DEFAULT
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         webView.settings.allowFileAccess = true
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
         webView.settings.mediaPlaybackRequiresUserGesture = false
         setContentView(webView)
-        if (savedInstanceState == null) webView.loadUrl("https://anvcell.github.io/anv-konter/")
-        else webView.restoreState(savedInstanceState)
+        webView.clearCache(true)
+        webView.loadUrl("https://anvcell.github.io/anv-konter/")
     }
     override fun onSaveInstanceState(outState: Bundle) { webView.saveState(outState); super.onSaveInstanceState(outState) }
     override fun onBackPressed() {
