@@ -9,7 +9,7 @@ on:
       - '.github/workflows/build-apk.yml'
 permissions:
   contents: read
-a jobs:
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
