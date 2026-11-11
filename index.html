@@ -14,6 +14,55 @@ body[data-theme="gold"]{background:#f7f1e6;color:#392b18}body[data-theme="gold"]
 @media(max-width:700px){#view-pembukuan .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* AnV premium dark dashboard layout */
 body{background:#0b1014!important;color:#e8edf5!important}header{background:#0d141b!important;border-bottom:1px solid #26313d;padding:12px 22px!important}header .logo{background:linear-gradient(135deg,#ffb46a,#ed633c)!important;color:#24150e!important}#app{display:grid;grid-template-columns:230px minmax(0,1fr);gap:0;max-width:none;margin:0;padding:0;min-height:calc(100vh - 62px)}.anv-sidebar{background:#111920;border-right:1px solid #26313d;padding:18px 12px;display:flex;flex-direction:column;min-height:calc(100vh - 62px);gap:6px}.side-brand{display:flex;align-items:center;gap:10px;padding:4px 7px 20px}.side-logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#ffb46a,#ed633c);color:#26150d;font-weight:950}.side-brand b{display:block;font-size:13px;letter-spacing:.6px}.side-brand small,.side-caption{display:block;color:#82909f;font-size:10px}.side-caption{padding:12px 9px 5px;letter-spacing:1px}.side-link{display:flex;align-items:center;gap:11px;width:100%;border:1px solid transparent;border-radius:10px;background:transparent;color:#aeb9c6;padding:11px 10px;text-align:left;font:600 12px inherit;cursor:pointer}.side-link.active,.side-link:hover{background:linear-gradient(90deg,#42251f,#2b2020);border-color:#654035;color:#fff}.side-bottom{margin-top:auto}.side-cash{border:1px solid #2b3947;background:#17222d;border-radius:12px;padding:12px;margin:12px 0}.side-cash small{display:block;color:#8392a3;font-size:9px}.side-cash b{display:block;margin-top:7px;font-size:15px;color:#f4f6f8}#appMain{min-width:0;padding:22px clamp(14px,2vw,30px) 48px;max-width:1500px;width:100%;margin:0 auto}.wrap{max-width:none}.card,.stat,.bal{background:#17212b!important;border:1px solid #2a3744!important;color:#e8edf5!important;box-shadow:0 6px 20px #0002!important}.stat label,.muted,.status{color:#91a0b0!important}.stat strong{color:#f3f5f8}.btn.gold{background:linear-gradient(135deg,#ff9b64,#ed633c)!important;color:#fff!important}.btn:not(.gold){background:#263442;color:#e8edf5;border-color:#3a4a59}.tablewrap{background:#151f29;border-color:#2a3744}table{color:#e8edf5}th{background:#202d39;color:#aeb9c6}td,th{border-color:#2b3946}input,select,textarea{background:#101923;color:#e8edf5;border-color:#354555}.tabs{display:none!important}.section{margin-top:18px}.top h2{color:#f4f6f8}@media(max-width:760px){#app{grid-template-columns:68px minmax(0,1fr)}.anv-sidebar{padding:12px 6px}.side-brand{justify-content:center;padding:4px 0 16px}.side-brand>div:last-child,.side-caption,.side-link span,.side-cash{display:none}.side-link{justify-content:center;padding:13px 5px;font-size:17px}#appMain{padding:14px 10px 35px}.grid.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start}}@media(max-width:430px){#app{grid-template-columns:58px minmax(0,1fr)}.anv-sidebar{padding:10px 4px}.side-link{padding:12px 2px}}
+
+/* Perapihan responsif AnV: navigasi horizontal di HP, sidebar penuh di laptop */
+@media(max-width:760px){
+  #app{display:block!important;min-height:0!important}
+  .anv-sidebar{
+    min-height:0!important;height:auto!important;display:flex!important;
+    flex-direction:row!important;align-items:center!important;gap:6px!important;
+    padding:8px 10px!important;overflow-x:auto!important;overflow-y:hidden!important;
+    position:sticky;top:0;z-index:4;border-right:0!important;
+    border-bottom:1px solid #2a3744!important;white-space:nowrap;
+    scrollbar-width:thin
+  }
+  .side-brand,.side-caption,.side-bottom{display:none!important}
+  .side-link{
+    display:flex!important;flex:0 0 auto!important;justify-content:center!important;
+    gap:7px!important;width:auto!important;min-width:max-content!important;
+    padding:10px 12px!important;border:1px solid #2a3744!important;
+    border-radius:10px!important;font-size:13px!important
+  }
+  .side-link span{display:inline!important;font-size:12px!important}
+  #appMain{width:100%!important;max-width:none!important;padding:16px 14px 36px!important}
+  .top{align-items:center!important}
+  #dashboardHome>.top>div:last-child{display:flex;flex-wrap:wrap;gap:7px}
+  #dashboardHome>.top>div:last-child .btn{margin:0!important}
+  .grid.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  .stat{min-width:0!important;padding:14px!important;border-radius:14px!important}
+  .stat label{display:block;font-size:12px!important;line-height:1.4!important}
+  .stat strong{font-size:clamp(15px,4vw,19px)!important;line-height:1.3!important;overflow-wrap:anywhere}
+  .balances,.actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .section{margin-top:20px!important}
+  .top h2{font-size:24px!important}
+  header{padding:12px 14px!important;gap:8px!important;flex-wrap:wrap!important}
+  .header-tools{margin-left:auto}
+  #who{display:none!important}
+}
+@media(max-width:420px){
+  #appMain{padding:13px 11px 30px!important}
+  .grid.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .stat{padding:12px!important}
+  .stat strong{font-size:15px!important}
+  #dashboardHome>.top{display:block!important}
+  #dashboardHome>.top>div:last-child{margin-top:12px}
+  #dashboardHome>.top>div:last-child .btn{font-size:12px!important;padding:10px 11px!important}
+  .brand h1{font-size:14px!important}
+  .brand small{font-size:11px!important}
+  .header-tools select{min-width:82px!important}
+  .row{grid-template-columns:1fr!important}
+}
+
 </style></head><body data-theme="dark">
 <header><div class="brand"><div class="logo">AnV</div><div><h1>AnV Konter & BRILink</h1><small>Pencatatan usaha terpadu</small></div></div><div class="header-tools"><label for="themeSelect">Tema</label><select id="themeSelect" aria-label="Pilih tema"><option value="light">Terang</option><option value="dark">Gelap</option><option value="blue">Biru</option><option value="green">Hijau</option><option value="gold">Emas</option></select><div id="who" class="status">Admin</div></div></header>
 <main class="wrap">
