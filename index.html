@@ -331,7 +331,7 @@ function updateReport(){const from=el("reportFrom").value,to=el("reportTo").valu
  const periodKey=d=>{const k=reportDateKey(d);if(!k)return "";return grouping==="year"?k.slice(0,4):grouping==="month"?k.slice(0,7):k};
  const periodLabel=k=>grouping==="year"?k:grouping==="month"?k.slice(5,7)+"/"+k.slice(0,4):k.slice(8,10)+"/"+k.slice(5,7)+"/"+k.slice(0,4);
  tx.forEach(t=>{const k=periodKey(t.date);if(!k)return;const g=periods[k]||(periods[k]={count:0,omzet:0,profit:0,fee:0,expense:0});g.count++;if(!["Saldo masuk","Saldo keluar"].includes(t.type))g.omzet+=Number(t.amount||0);g.profit+=transactionProfit(t);g.fee+=Number(t.fee||0)+(t.payments||[]).filter(p=>inRange(p.date)).reduce((a,p)=>a+Number(p.fee||0),0)});
- ex.forEach(x=>{const k=periodKey(x.date);if(!k)return;const g=periods[k]||(periods[k]={omzet:0,profit:0,expense:0});g.expense+=Number(x.amount||0)});
+ ex.forEach(x=>{const k=periodKey(x.date);if(!k)return;const g=periods[k]||(periods[k]={count:0,omzet:0,profit:0,fee:0,expense:0});g.expense+=Number(x.amount||0)});
  const periodRows=Object.entries(periods).sort((a,b)=>b[0].localeCompare(a[0]));
  el("reportPeriodRows").innerHTML=periodRows.length?periodRows.map(([k,g])=>"<tr><td>"+safe(periodLabel(k))+"</td><td>"+g.count.toLocaleString("id-ID")+"</td><td>"+money(g.omzet)+"</td><td>"+money(g.profit)+"</td><td>"+money(g.fee)+"</td><td>"+money(g.expense)+"</td><td><b>"+money(g.profit-g.expense)+"</b></td></tr>").join(""):'<tr><td colspan="7">Belum ada data pada periode ini.</td></tr>';
 
